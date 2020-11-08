@@ -1,57 +1,83 @@
-// Assign the data from `data.js` to a descriptive variable
-var people = data;
+// from data.js
+var tableData = data;
 
-// Select the button
-var button = d3.select("#button");
+// YOUR CODE HERE!
+//Select the table
+var ufoTable = d3.select("table");
+//Select the table body
+var tbody = ufoTable.select("tbody");
 
-// Select the form
-var form = d3.select("#form");
+//Lets add all the info to the table
+data.forEach((ufoSight) => {
+    //add a ruw in the table body
+    var row = tbody.append("tr");
+    //for each  ufo sighting extract each value and key
+    //then create a cell and write the text or value 
+    Object.entries(ufoSight).forEach(([key, value]) => {
+      var cell = row.append("td");
+      cell.text(value);
+    });
+  });
 
-// Create event handlers 
-button.on("click", runEnter);
-form.on("submit",runEnter);
+//Lets detect a change in the button and the variable
+//Detect the button
+var button = d3.select("#filter-btn");
 
-// Complete the event handler function for the form
-function runEnter() {
+//See if someone press the button and go to function Handle_click
+button.on("click", handleClick);
 
-  // Prevent the page from refreshing
-  d3.event.preventDefault();
+//Function that get activated if some click a button
+function handleClick(){
+    //Print in console that some one click the button
+    console.log("Someone prees the button");
+    
+    //Print what trigger the event
+    console.log(d3.event.target);
+    console.log("Someone write something");
+    
+    
+    //Lets extract the text
+    // Select the input element and get the raw HTML node
+    var inputElement = d3.select("#datetime");
   
-  // Select the input element and get the raw HTML node
-  var inputElement = d3.select("#patient-form-input");
+    // Get the value property of the input element
+    var newDate = inputElement.property("value");
+    console.log("the date")
+    console.log(newDate);
+    
+    //FILTER DATA
+    var filteredData = tableData.filter(function(d) {
+        return d["datetime"] === newDate 
+      });
+    console.log("aQUÍ SI LLEGÓ");
+    console.log(filteredData);
 
-  // Get the value property of the input element
-  var inputValue = inputElement.property("value");
+    //lets try to erase the table
+    d3.selectAll("td").remove();
+    
+    //REWRITE THE TABLE
+    //Count the number of elements in the array
+    var elements = filteredData.length;
+    console.log(elements);
 
-  console.log(inputValue);
-  console.log(people);
+    if (elements === 0) {
+        var row = tbody.append("tr");
+        var cell = row.append("td");
+        cell.text("Sorry, no info found");
 
-  var filteredData = people.filter(person => person.bloodType === inputValue);
-
-  console.log(filteredData);
-
-  // BONUS: Calculate summary statistics for the age field of the filtered data
-
-  // First, create an array with just the age values
-  var ages = filteredData.map(person => person.age);
-
-  // Next, use math.js to calculate the mean, median, mode, var, and std of the ages
-  var mean = math.mean(ages);
-  var median = math.median(ages);
-  var mode = math.mode(ages);
-  var variance = math.var(ages);
-  var standardDeviation = math.std(ages);
-
-  // Then, select the unordered list element by class name
-  var list = d3.select(".summary");
-
-  // remove any children from the list to
-  list.html("");
-
-  // append stats to the list
-  list.append("li").text(`Mean: ${mean}`);
-  list.append("li").text(`Median: ${median}`);
-  list.append("li").text(`Mode: ${mode}`);
-  list.append("li").text(`Variance: ${variance}`);
-  list.append("li").text(`Standard Deviation: ${standardDeviation}`);
+     } else {
+        filteredData.forEach((ufoSight) => {
+            //add a ruw in the table body
+            var row = tbody.append("tr");
+            //for each  ufo sighting extract each value and key
+            //then create a cell and write the text or value 
+            Object.entries(ufoSight).forEach(([key, value]) => {
+              var cell = row.append("td");
+              cell.text(value);
+            });
+          });
+     }
+ 
 };
+
+
